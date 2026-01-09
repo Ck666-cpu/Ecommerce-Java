@@ -4,6 +4,7 @@ import com.example.Ecommerce.model.User;
 import com.example.Ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -13,13 +14,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already taken: " + user.getEmail());
         }
-        // In a real app, we would hash the password here before saving!
+        // ENCODE THE PASSWORD BEFORE SAVING
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
+//    public User createUser(User user) {
+//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//            throw new RuntimeException("Email already taken: " + user.getEmail());
+//        }
+//        // In a real app, we would hash the password here before saving!
+//        return userRepository.save(user);
+//    }
 
     public User getUserById(Long id) {
         return userRepository.findById(id)

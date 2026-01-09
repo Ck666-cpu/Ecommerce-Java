@@ -33,7 +33,8 @@ public class GlobalExceptionHandler {
         
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("message", "An error occurred");
+//        errorDetails.put("message", "An error occurred");
+        errorDetails.put("message", ex.getMessage());
         errorDetails.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorDetails.put("error", "Internal Server Error");
         errorDetails.put("path", request.getDescription(false));
