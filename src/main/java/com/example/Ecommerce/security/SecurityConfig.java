@@ -32,6 +32,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/categories/**").permitAll()
                         // Only Admin can create/edit categories
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+                        // Allow everyone to READ reviews
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/reviews/**").permitAll()
 
                         // All other requests require at least authentication (USER or ADMIN)
                         .anyRequest().authenticated()
