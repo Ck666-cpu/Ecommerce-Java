@@ -34,4 +34,9 @@ public class Product {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+    //relationship for categories filtering
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

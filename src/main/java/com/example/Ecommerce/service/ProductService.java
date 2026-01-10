@@ -6,6 +6,8 @@ import com.example.Ecommerce.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,8 +19,9 @@ public class ProductService {
     private ProductRepository productRepository;
     
     // Get all products
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    // Return a Page instead of a List
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
     
     // Get product by ID with exception handling
