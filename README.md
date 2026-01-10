@@ -1,115 +1,135 @@
-# 🛒 Spring Boot E-commerce Backend
+# 🛒 Java Spring Boot E-Commerce Platform
 
-A robust backend REST API for an e-commerce platform built with **Java 17** and **Spring Boot**. This application handles user management, product inventory, and order processing, secured with **JWT (JSON Web Token)** authentication.
+A full-stack ready E-commerce backend built with **Spring Boot**, featuring secure authentication, product management, shopping cart functionality, and order processing.
 
-## 🚀 Features
+## 🚀 Key Features
 
-* **User Management:** Registration and Login with Role-Based Access Control (Customer/Admin).
-* **Product Catalog:** CRUD operations for managing products and inventory.
-* **Order Processing:** Secure order placement with automatic stock deduction.
-* **Security:** Stateless authentication using JWT and BCrypt password hashing.
-* **Database:** H2 In-Memory database for rapid development and testing.
-* **Error Handling:** Global exception handling for standardized API responses.
+### 👤 User Management
+* **Authentication:** Secure Login & Registration using **JWT (JSON Web Tokens)**.
+* **Role-Based Access:** Distinct permissions for **ADMIN** (Inventory) vs **CUSTOMER** (Shopping).
+
+### 📦 Product & Inventory
+* **Catalog:** Browse products with **Pagination** and **Sorting**.
+* **Search:** Filter products by name.
+* **Categories:** Organize products into specific categories (e.g., Electronics, Books).
+* **Reviews:** Customers can leave star ratings and comments on products.
+
+### 🛒 Shopping Experience
+* **Persistent Cart:** Users have a dedicated shopping cart managed in the database.
+* **Inventory Checks:** Automatic stock validation prevents overselling.
+* **Checkout:** Seamless conversion of Cart items into a finalized Order.
+* **Order History:** Customers can view their past purchases.
+
+---
 
 ## 🛠️ Tech Stack
 
-* **Language:** Java 17
-* **Framework:** Spring Boot 3.5.9
-* **Build Tool:** Maven (Wrapper included)
-* **Database:** H2 (In-Memory)
-* **Security:** Spring Security, JJWT (0.11.5)
+* **Core:** Java 17+, Spring Boot 3.x
+* **Database:** H2 In-Memory (Dev) / PostgreSQL (Prod ready)
+* **Security:** Spring Security, BCrypt, JJWT
 * **Persistence:** Spring Data JPA, Hibernate
+* **Build Tool:** Maven
 
-## 📂 Project Structure
+---
 
-```text
-src/main/java/com/example/Ecommerce/
-├── controller/       # REST API Endpoints (Product, User, Order)
-├── dto/              # Data Transfer Objects (LoginRequest, OrderRequest)
-├── exception/        # Global Exception Handlers
-├── model/            # JPA Entities (User, Product, Order, OrderItem)
-├── repository/       # Database Access Interfaces
-├── security/         # JWT Filters, Utils, and Security Configuration
-└── service/          # Business Logic
+## ⚙️ Setup & Installation
 
-```
+### 1. Prerequisites
+* Java JDK 17 or higher
+* Maven (Optional, wrapper included)
+* (Optional) Node.js if running the frontend
 
-## ⚙️ Configuration & Setup
-
-### Prerequisites
-
-* JDK 17 or higher
-* Maven (optional, as `mvnw` is provided)
-
-### 1. Clone & Build
-
+### 2. Clone the Repository
 ```bash
-git clone [https://github.com/Ck666-cpu/Ecommerce-Java]
+git clone [https://github.com/your-username/ecommerce-java.git](https://github.com/your-username/ecommerce-java.git)
 cd ecommerce-java
-./mvnw clean install
 
 ```
 
-### 2. Run the Application
+### 3. Database Configuration
 
-The application is configured to run on port **8081** to avoid conflicts with other common services.
+The project is currently configured to use the **H2 In-Memory Database** for instant setup.
+
+* **File:** `src/main/resources/application.properties`
+* **Console URL:** `http://localhost:8081/h2-console`
+* **JDBC URL:** `jdbc:h2:mem:testdb`
+* **User/Pass:** `sa` / *(blank)*
+
+*(To switch to PostgreSQL, update the `spring.datasource` properties in `application.properties`)*.
+
+### 4. Run the Application
 
 ```bash
+# Windows
+./mvnw.cmd spring-boot:run
+
+# Mac/Linux
 ./mvnw spring-boot:run
 
 ```
 
-### 3. Database Access (H2 Console)
+The API will start at: `http://localhost:8081`
 
-Since the app uses an in-memory database, you can access the raw data console while the app is running:
+---
 
-* **URL:** `http://localhost:8081/h2-console`
-* **JDBC URL:** `jdbc:h2:mem:testdb`
-* **Username:** `sa`
-* **Password:** *(leave blank)*
+## 🔌 API Reference
 
-## 🔌 API Endpoints
+### 🔓 Public Endpoints
 
-### 👤 User Authentication
+| Method | URL | Description |
+| --- | --- | --- |
+| `POST` | `/api/users/register` | Register a new account |
+| `POST` | `/api/users/login` | Login to receive JWT |
+| `GET` | `/api/products` | List products (Supports `?page=0&size=10&sortBy=price`) |
+| `GET` | `/api/products/search` | Search (`?query=Laptop`) |
+| `GET` | `/api/products/{id}` | Get product details |
+| `GET` | `/api/categories` | List all categories |
+| `GET` | `/api/reviews/{pid}` | View reviews for a product |
 
-| Method | Endpoint | Description | Auth Required |
-| --- | --- | --- | --- |
-| `POST` | `/api/users/register` | Register a new user | ❌ No |
-| `POST` | `/api/users/login` | Login to receive a JWT Token | ❌ No |
-| `GET` | `/api/users/{id}` | Get user details | ✅ Yes |
+### 🔐 Customer Endpoints (Headers: `Authorization: Bearer <token>`)
 
-### 📦 Products
+| Method | URL | Description |
+| --- | --- | --- |
+| `GET` | `/api/cart` | View current shopping cart |
+| `POST` | `/api/cart/add` | Add item (`?productId=1&quantity=1`) |
+| `DELETE` | `/api/cart/remove/{id}` | Remove item from cart |
+| `POST` | `/api/orders/checkout` | Place order from cart |
+| `GET` | `/api/orders/myorders` | View order history |
+| `POST` | `/api/reviews/add` | Add a review for a product |
 
-| Method | Endpoint | Description | Auth Required |
-| --- | --- | --- | --- |
-| `GET` | `/api/products` | List all products | ✅ Yes |
-| `GET` | `/api/products/{id}` | Get specific product details | ✅ Yes |
-| `POST` | `/api/products` | Create a new product | ✅ Yes |
+### 🛡️ Admin Endpoints
 
-### 🛒 Orders
+| Method | URL | Description |
+| --- | --- | --- |
+| `POST` | `/api/products` | Create new product |
+| `PUT` | `/api/products/{id}` | Update product |
+| `DELETE` | `/api/products/{id}` | Delete product |
+| `POST` | `/api/categories` | Create new category |
 
-| Method | Endpoint | Description | Auth Required |
-| --- | --- | --- | --- |
-| `POST` | `/api/orders` | Place a new order | ✅ Yes |
-| `GET` | `/api/orders/myorders` | Get current user's history | ✅ Yes |
+---
 
-> **Note:** For endpoints requiring Auth, add the header: `Authorization: Bearer <your_jwt_token>`
+## 🧪 Testing
 
-## 🛡️ Security Details
+### Postman
 
-* **JWT Secret:** Currently hardcoded in `JwtUtil.java` for development purposes. For production, move this to an environment variable.
-* **Password Encryption:** User passwords are hashed using `BCryptPasswordEncoder` before storage.
-* **Stock Management:** The `OrderService` automatically checks and decrements product stock quantity upon successful order placement (`@Transactional`).
+1. **Login** as a user to get a Token.
+2. Set the token in the **Authorization** tab (Type: Bearer Token).
+3. Test endpoints like `GET /api/cart` or `POST /api/orders/checkout`.
 
-## 🧪 Running Tests
+### JUnit
 
-The project includes JUnit 5 tests. Run them using:
+Run the automated test suite to verify the logic:
 
 ```bash
 ./mvnw test
 
 ```
 
-## 📝 License
+---
 
-This project is open-source and available for educational and development purposes.
+## 🔮 Future Roadmap
+
+* [ ] React.js Frontend Integration
+* [ ] Image Uploads (AWS S3 / Local Storage)
+* [ ] Payment Gateway Integration (Stripe)
+* [ ] Email Notifications for Orders
