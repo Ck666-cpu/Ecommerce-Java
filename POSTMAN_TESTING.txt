@@ -1,0 +1,157 @@
+========================================================================
+E-COMMERCE API TESTING CRITERIA
+Base URL: http://localhost:8081
+Date: 2026-01-10
+========================================================================
+
+------------------------------------------------------------------------
+SECTION 1: AUTHENTICATION & USERS
+------------------------------------------------------------------------
+
+1. REGISTER NEW CUSTOMER
+   - Method: POST
+   - URL: {{base_url}}/api/users/register
+   - Headers: Content-Type: application/json
+   - Body (JSON):
+     {
+       "email": "customer@example.com",
+       "password": "password123",
+       "fullName": "Test Customer",
+       "role": "CUSTOMER"
+     }
+   - Expected Status: 200 OK
+   - Validation: Response should contain user ID and "CUSTOMER" role.
+
+2. REGISTER ADMIN (One-time setup)
+   - Method: POST
+   - URL: {{base_url}}/api/users/register
+   - Headers: Content-Type: application/json
+   - Body (JSON):
+     {
+       "email": "admin@example.com",
+       "password": "adminpass",
+       "fullName": "Super Admin",
+       "role": "ADMIN"
+     }
+   - Expected Status: 200 OK
+   - Validation: Response should contain "ADMIN" role.
+
+3. LOGIN (Get Token)
+   - Method: POST
+   - URL: {{base_url}}/api/users/login
+   - Headers: Content-Type: application/json
+   - Body (JSON):
+     {
+       "email": "customer@example.com",
+       "password": "password123"
+     }
+   - Expected Status: 200 OK
+   - Validation: Response body is a pure String (JWT Token).
+   - ACTION: Copy this token for future requests (Set as Bearer Token).
+
+------------------------------------------------------------------------
+SECTION 2: ADMIN MANAGEMENT (Requires ADMIN Token)
+------------------------------------------------------------------------
+
+4. CREATE CATEGORY
+   - Method: POST
+   - URL: {{base_url}}/api/categories
+   - Authorization: Bearer <ADMIN_TOKEN>
+   - Body (JSON):
+     {
+       "name": "Electronics"
+     }
+   - Expected Status: 200 OK
+   - Validation: Response contains created ID (e.g., 1).
+
+5. CREATE PRODUCT
+   - Method: POST
+   - URL: {{base_url}}/api/products
+   - Authorization: Bearer <ADMIN_TOKEN>
+   - Body (JSON):
+     {
+       "name": "Gaming Laptop",
+       "description": "High performance laptop",
+       "price": 1500.00,
+       "stockQuantity": 10,
+       "category": {
+           "id": 1
+       }
+     }
+   - Expected Status: 200 OK
+   - Validation: Response contains Product ID and linked Category.
+
+------------------------------------------------------------------------
+SECTION 3: PUBLIC BROWSING (No Token Required)
+------------------------------------------------------------------------
+
+6. GET ALL PRODUCTS (Pagination)
+   - Method: GET
+   - URL: {{base_url}}/api/products?page=0&size=5&sortBy=price
+   - Expected Status: 200 OK
+   - Validation:
+     - "content": [List of products]
+     - "totalElements": > 0
+     - "totalPages": > 0
+
+7. SEARCH PRODUCTS
+   - Method: GET
+   - URL: {{base_url}}/api/products/search?query=Laptop
+   - Expected Status: 200 OK
+   - Validation: List contains only items with "Laptop" in name.
+
+8. GET ALL CATEGORIES
+   - Method: GET
+   - URL: {{base_url}}/api/categories
+   - Expected Status: 200 OK
+
+------------------------------------------------------------------------
+SECTION 4: SHOPPING CART (Requires CUSTOMER Token)
+------------------------------------------------------------------------
+
+9. ADD ITEM TO CART
+   - Method: POST
+   - URL: {{base_url}}/api/cart/add?productId=1&quantity=1
+   - Authorization: Bearer <CUSTOMER_TOKEN>
+   - Body: Empty (Params are in URL query)
+   - Expected Status: 200 OK
+   - Validation: Response shows Cart object with "items" list containing Product ID 1.
+
+10. VIEW MY CART
+    - Method: GET
+    - URL: {{base_url}}/api/cart
+    - Authorization: Bearer <CUSTOMER_TOKEN>
+    - Expected Status: 200 OK
+    - Validation: "items" list is not empty.
+
+11. REMOVE ITEM FROM CART (Optional Test)
+    - Method: DELETE
+    - URL: {{base_url}}/api/cart/remove/1
+    - Authorization: Bearer <CUSTOMER_TOKEN>
+    - Expected Status: 200 OK
+    - Validation: Item with Product ID 1 is gone from the list.
+
+------------------------------------------------------------------------
+SECTION 5: ORDER & CHECKOUT (Requires CUSTOMER Token)
+------------------------------------------------------------------------
+
+12. CHECKOUT CART
+    - Method: POST
+    - URL: {{base_url}}/api/orders/checkout
+    - Authorization: Bearer <CUSTOMER_TOKEN>
+    - Expected Status: 200 OK
+    - Validation:
+      - Response is an ORDER object (not Cart).
+      - "status": "PENDING".
+      - Cart should be empty if you call (10) again.
+
+13. GET MY ORDER HISTORY
+    - Method: GET
+    - URL: {{base_url}}/api/orders/myorders
+    - Authorization: Bearer <CUSTOMER_TOKEN>
+    - Expected Status: 200 OK
+    - Validation: Returns a list containing the order created in step 12.
+
+========================================================================
+END OF TESTING CRITERIA
+========================================================================
