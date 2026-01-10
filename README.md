@@ -41,7 +41,7 @@ A full-stack ready E-commerce backend built with **Spring Boot**, featuring secu
 
 ### 2. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/ecommerce-java.git](https://github.com/your-username/ecommerce-java.git)
+git clone [https://github.com/Ck666-cpu/Ecommerce-Java.git](https://github.com/Ck666-cpu/Ecommerce-Java.git)
 cd ecommerce-java
 
 ```
