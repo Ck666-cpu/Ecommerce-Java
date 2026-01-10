@@ -1,6 +1,6 @@
 # 🛒 Java Spring Boot E-Commerce Platform
 
-A full-stack ready E-commerce backend built with **Spring Boot**, featuring secure authentication, product management, shopping cart functionality, and order processing.
+A ready E-commerce backend built with **Spring Boot**, featuring secure authentication, product management, shopping cart functionality, and order processing.
 
 ## 🚀 Key Features
 
