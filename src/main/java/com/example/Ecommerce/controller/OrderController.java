@@ -38,4 +38,9 @@ public class OrderController {
 
         return ResponseEntity.ok(orders);
     }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<Order> checkout(Principal principal) {
+        return ResponseEntity.ok(orderService.checkoutCart(principal.getName()));
+    }
 }

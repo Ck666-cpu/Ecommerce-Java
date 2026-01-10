@@ -79,4 +79,35 @@ public class OrderService {
         // 2. Use the existing repository method to find orders by ID
         return orderRepository.findByUserId(user.getId());
     }
+
+    @Autowired
+    private CartService cartService; // Inject the cart service
+
+    @Transactional
+    public Order checkoutCart(String email) {
+        // 1. Get the Cart
+        Cart cart = cartService.getCart(email);
+        if (cart.getItems().isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
+
+        // 2. Convert Cart to OrderRequest DTO (reusing your existing logic!)
+        OrderRequest request = new OrderRequest();
+        request.setItems(new java.util.ArrayList<>());
+
+        for (com.example.Ecommerce.model.CartItem cartItem : cart.getItems()) {
+            OrderRequest.OrderItemRequest itemRequest = new OrderRequest.OrderItemRequest();
+            itemRequest.setProductId(cartItem.getProduct().getId());
+            itemRequest.setQuantity(cartItem.getQuantity());
+            request.getItems().add(itemRequest);
+        }
+
+        // 3. Place Order (This handles stock deduction and saving)
+        Order order = placeOrder(email, request);
+
+        // 4. Clear the cart after successful order
+        cartService.clearCart(email);
+
+        return order;
+    }
 }
