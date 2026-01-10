@@ -69,4 +69,14 @@ public class OrderService {
     public List<Order> getUserOrders(Long userId) {
         return orderRepository.findByUserId(userId);
     }
+
+    // NEW METHOD: Fetch orders using the email from the JWT
+    public List<Order> getOrdersByUserEmail(String email) {
+        // 1. Find the User ID from the email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Use the existing repository method to find orders by ID
+        return orderRepository.findByUserId(user.getId());
+    }
 }

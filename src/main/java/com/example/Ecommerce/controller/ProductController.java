@@ -33,4 +33,9 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         return ResponseEntity.ok(productService.saveProduct(product));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String query) {
+        return ResponseEntity.ok(productService.searchProductsByName(query));
+    }
 }

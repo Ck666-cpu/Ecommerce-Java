@@ -28,10 +28,14 @@ public class OrderController {
         return ResponseEntity.ok(newOrder);
     }
 
-    @GetMapping("/myorders") // Let's simplify this endpoint too
+    @GetMapping("/myorders")
     public ResponseEntity<List<Order>> getMyOrders(Principal principal) {
-        // We need to fetch the user ID first, or update getUserOrders to use email too.
-        // For now, let's keep it simple:
-        return ResponseEntity.ok(List.of()); // You can implement this logic similar to placeOrder
+        // 1. Get the email from the security context (JWT)
+        String email = principal.getName();
+
+        // 2. Fetch orders for this specific user
+        List<Order> orders = orderService.getOrdersByUserEmail(email);
+
+        return ResponseEntity.ok(orders);
     }
 }
